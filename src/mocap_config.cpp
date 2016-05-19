@@ -159,39 +159,3 @@ bool PublishedRigidBody::validateParam(XmlRpc::XmlRpcValue &config_node, const s
 
   return true;
 }
-
-void PublishedRigidBody::updateLastPose(RigidBody &body)
-{
-  last_pose.position.x = body.pose.position.x;
-  last_pose.position.y = body.pose.position.y;
-  last_pose.position.z = body.pose.position.z;
-  
-  last_pose.orientation.x = body.pose.orientation.x;
-  last_pose.orientation.y = body.pose.orientation.y;
-  last_pose.orientation.z = body.pose.orientation.z;
-  last_pose.orientation.w = body.pose.orientation.w;
-}
-
-bool PublishedRigidBody::checkSameAsLast(RigidBody &body)
-{
-  bool same = true;
-  same &= (last_pose.position.x == body.pose.position.x);
-  same &= (last_pose.position.y == body.pose.position.y);
-  same &= (last_pose.position.z == body.pose.position.z);
-  same &= (last_pose.orientation.x == body.pose.orientation.x);
-  same &= (last_pose.orientation.y == body.pose.orientation.y);
-  same &= (last_pose.orientation.z == body.pose.orientation.z);
-  same &= (last_pose.orientation.w == body.pose.orientation.w);
-
-  if (same)
-  {
-    lost_frame_count++;
-  }
-  else
-  {
-    lost_frame_count = 0;
-    last_pose_time = ros::Time::now().toSec();
-  }
-  return same;
-};
-

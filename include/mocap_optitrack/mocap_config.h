@@ -77,10 +77,6 @@ class PublishedRigidBody
   public:
   PublishedRigidBody(XmlRpc::XmlRpcValue &);
   void publish(RigidBody &);
-  void updateLastPose(RigidBody &);
-  bool checkSameAsLast(RigidBody &);
-  int lost_frame_count;
-  double last_pose_time;
 };
 
 typedef std::map<int, PublishedRigidBody> RigidBodyMap;
