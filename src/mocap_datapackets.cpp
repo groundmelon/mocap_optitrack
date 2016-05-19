@@ -152,6 +152,7 @@ void MoCapDataFormat::parse()
 
     // skip mean marker error
     seek(sizeof(float));
+    seek(2);
   }
 
   // TODO: read skeletons

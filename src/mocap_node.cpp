@@ -79,7 +79,22 @@ void processMocapData( const char** mocap_model,
 
               if (item != published_rigid_bodies.end())
               {
+                if (item->second.checkSameAsLast(format.model.rigidBodies[i]))
+                {
+                  // same as last
+                  if (item->second.lost_frame_count > 5)
+                  {
+                    ROS_WARN("[Mocap] RigidBody #%d Lost [%d Frames, %.0fms]",
+                      ID,
+                      item->second.lost_frame_count,
+                      (ros::Time::now().toSec()-item->second.last_pose_time)*1000.0);
+                  }
+                }
+                else
+                {
                   item->second.publish(format.model.rigidBodies[i]);
+                }
+                item->second.updateLastPose(format.model.rigidBodies[i]);
               }
             }
           }
@@ -156,6 +171,7 @@ int main( int argc, char* argv[] )
           }
       }
   }
+  ROS_WARN("published_rigid_bodies.size()=%zu", published_rigid_bodies.size());
 
   // Process mocap data until SIGINT
   processMocapData(mocap_model, published_rigid_bodies, multicast_ip);

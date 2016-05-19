@@ -3,6 +3,8 @@ project(mocap_optitrack)
 
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs tf roslaunch message_generation)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
 catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS roscpp message_runtime
@@ -13,6 +15,15 @@ include_directories(include
 )
 
 add_subdirectory(src)
+
+
+
+add_executable(${PROJECT_NAME}_object_transform_node
+	src/object_transform.cpp
+)
+target_link_libraries(${PROJECT_NAME}_object_transform_node 
+	${catkin_LIBRARIES}
+)
 
 install(DIRECTORY launch config
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

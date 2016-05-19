@@ -12,4 +12,13 @@
         required="true">
     <rosparam file="$(arg mocap_config_file)" command="load" />
   </node>
+
+  <node pkg="mocap_optitrack" 
+        type="mocap_optitrack_object_transform_node" 
+        name="mocap_object_transformer" 
+        output="screen">
+    <remap from="~in_pose" to="/Robot_1/pose" />
+	<remap from="~object_pose" to="/mocap/obj_pose" />
+  </node>
+
 </launch>
