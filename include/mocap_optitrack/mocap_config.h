@@ -70,8 +70,6 @@ class PublishedRigidBody
   ros::Publisher pose_pub;
   ros::Publisher pose2d_pub;
 
-  Pose last_pose;
-
   bool validateParam(XmlRpc::XmlRpcValue &, const std::string &);
 
   public:
