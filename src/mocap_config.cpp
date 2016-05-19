@@ -90,6 +90,10 @@ void PublishedRigidBody::publish(RigidBody &body)
   {
     return;
   }
+  // Not tracked data
+  if (!body.tracked) {
+    return;
+  }
   // NaN?
   if (body.pose.position.x != body.pose.position.x)
   {
