@@ -7,7 +7,7 @@
 using namespace std;
 
 RigidBody::RigidBody() 
-  : NumberOfMarkers(0), marker(0)
+  : NumberOfMarkers(0), marker(0), tracked(true)
 {
 }
 
@@ -63,8 +63,8 @@ ModelFrame::~ModelFrame()
   delete[] rigidBodies;
 }
 
-MoCapDataFormat::MoCapDataFormat(const char *packet, unsigned short length) 
-  : packet(packet), length(length), frameNumber(0)
+MoCapDataFormat::MoCapDataFormat(const char *packet, unsigned short length, bool new_version_sdk) 
+  : packet(packet), length(length), new_version_sdk(new_version_sdk), frameNumber(0)
 {
 }
 
@@ -152,6 +152,23 @@ void MoCapDataFormat::parse()
 
     // skip mean marker error
     seek(sizeof(float));
+
+    // handle tracking flags
+
+    // set true for older version
+    model.rigidBodies[m].tracked = true;
+
+    // parse if it is new version
+    if (new_version_sdk) {
+      short flag;
+      read_and_seek(flag);
+      if (flag & 0x01) {
+        model.rigidBodies[m].tracked = true;
+      }
+      else {
+        model.rigidBodies[m].tracked = false; 
+      }
+    }
   }
 
   // TODO: read skeletons

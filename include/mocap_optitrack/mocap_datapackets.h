@@ -86,6 +86,8 @@ class RigidBody
     int NumberOfMarkers;
     Marker *marker;
 
+    bool tracked;
+
     const geometry_msgs::PoseStamped get_ros_pose();
     bool has_data();
 };
@@ -134,7 +136,7 @@ class ModelFrame
 class MoCapDataFormat
 {
   public:
-    MoCapDataFormat(const char *packet, unsigned short length);
+    MoCapDataFormat(const char *packet, unsigned short length, bool new_version_sdk=false);
     ~MoCapDataFormat();
 
     /// \brief Parses a NatNet data frame packet as it is streamed by the Arena software according to the descriptions in the NatNet SDK v1.4
@@ -143,6 +145,7 @@ class MoCapDataFormat
 
     const char *packet;
     unsigned short length;
+    bool new_version_sdk;
 
     int frameNumber;
     ModelFrame model;

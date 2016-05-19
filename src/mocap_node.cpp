@@ -28,6 +28,9 @@
 // ip on multicast group - cannot be changed in Arena
 const std::string MULTICAST_IP_KEY = "optitrack_config/multicast_address";
 const std::string MULTICAST_IP_DEFAULT = "224.0.0.1";
+const std::string SDK_VERSION_KEY = "optitrack_config/sdk_version";
+const float SDK_VERSION_DEFAULT = 1.4;
+const float SDK_VERSION_THRESHOLD = 2.6;
 
 const std::string MOCAP_MODEL_KEY = "mocap_model";
 const std::string RIGID_BODIES_KEY = "rigid_bodies";
@@ -39,7 +42,8 @@ const int LOCAL_PORT = 1511;
 
 void processMocapData( const char** mocap_model,
                        RigidBodyMap& published_rigid_bodies,
-                       const std::string& multicast_ip)
+                       const std::string& multicast_ip,
+                       bool new_version_sdk=false)
 {
   UdpMulticastSocket multicast_client_socket( LOCAL_PORT, multicast_ip );
 
@@ -65,7 +69,7 @@ void processMocapData( const char** mocap_model,
         if (header == 7)
         {
           payload = *((ushort*) &buffer[2]);
-          MoCapDataFormat format(buffer, payload);
+          MoCapDataFormat format(buffer, payload, new_version_sdk);
           format.parse();
           packetread = true;
           numberOfPackets++;
@@ -132,6 +136,19 @@ int main( int argc, char* argv[] )
     ROS_WARN_STREAM("Could not get multicast address, using default: " << multicast_ip);
   }
 
+  float sdk_version = SDK_VERSION_DEFAULT;
+  if(n.getParam(SDK_VERSION_KEY, sdk_version)) {
+    if (sdk_version >= SDK_VERSION_THRESHOLD) {
+      ROS_INFO("Compatible with NatNet v%.1f or later", SDK_VERSION_THRESHOLD);
+    }
+    else {
+      ROS_INFO("Compatible with NatNet v%.1f or lower", static_cast<int>(SDK_VERSION_THRESHOLD*10-1)/10.0f);
+    }
+  }
+  else {
+      ROS_WARN("Could not get version. Compatible with NatNet v%.1f (default)", sdk_version);
+  }
+
   RigidBodyMap published_rigid_bodies;
 
   if (n.hasParam(RIGID_BODIES_KEY))
@@ -158,7 +175,7 @@ int main( int argc, char* argv[] )
   }
 
   // Process mocap data until SIGINT
-  processMocapData(mocap_model, published_rigid_bodies, multicast_ip);
+  processMocapData(mocap_model, published_rigid_bodies, multicast_ip, sdk_version >= SDK_VERSION_THRESHOLD);
 
   return 0;
 }
