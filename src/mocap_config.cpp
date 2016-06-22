@@ -80,7 +80,6 @@ PublishedRigidBody::PublishedRigidBody(XmlRpc::XmlRpcValue &config_node)
     parent_frame_id = (std::string&) config_node[PARENT_FRAME_ID_PARAM_NAME];
   }
 
-  lost_frame_count = 0;
 }
 
 void PublishedRigidBody::publish(RigidBody &body)
