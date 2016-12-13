@@ -36,8 +36,8 @@ int main(int argc, char** argv)
   	ros::Time last_pose_time(0.0);
   	bool first_pose_set = false;
 	
-  	Matrix3d w_R_m; w_R_m << -1,0,0,0,-1,0,0,0,1;
-  	Matrix3d b_R_m; b_R_m << -1,0,0,0,-1,0,0,0,1;
+  	Matrix3d w_R_m; w_R_m << 1,0,0,0,1,0,0,0,1;
+  	Matrix3d b_R_m; b_R_m << 1,0,0,0,1,0,0,0,1;
 
 	Vector3d mopti_P_mk;
 	Matrix3d mopti_R_mk;
@@ -93,6 +93,7 @@ int main(int argc, char** argv)
 			mopti_P_m0 = mopti_P_mk;
 			mopti_R_m0 = mopti_R_mk;
 			ROS_INFO("[OptiTransform] Initialization finished.");
+            ROS_INFO_STREAM("T:" << mopti_P_m0.transpose() << "\nR:\n" << mopti_R_m0);
 			first_pose_set = true;
 		}
 		else
